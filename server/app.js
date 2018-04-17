@@ -53,30 +53,29 @@ app.post('/drinks', function (req, res) {
         //This makes a seperate call to the API again, using a seperate helper function looking up cocktails by ID
         //This allows us to obtain the instructions and ingredients
         .then((id) => {
-          helpers.getCocktailsById(id)
-            .then((details) => {
-              var drink = JSON.parse(details).drinks[0];
-              var cocktail = {
-                drinkName: drink.strDrink,
-                drinkImageUrl: 'https://' + drink.strDrinkThumb,
-                drinkInstruction: drink.strInstructions,
-                ingredient: helpers.filterIngredients(drink)
-              }
-              return cocktail;
-            })
-            .then((cocktail) => {
-              drinksToClient.push(cocktail);
-              setTimeout(function() {
-                res.end(JSON.stringify(drinksToClient));
-              }, 1000)
-            })
-            .catch((error) => {
-              throw error;
-            })
+          return helpers.getCocktailsById(id)
+        })
+        .then((details) => {
+          var drink = JSON.parse(details).drinks[0];
+          var cocktail = {
+            drinkName: drink.strDrink,
+            drinkImageUrl: 'https://' + drink.strDrinkThumb,
+            drinkInstruction: drink.strInstructions,
+            ingredient: helpers.filterIngredients(drink)
+          }
+          return cocktail;
+        })
+        .then((cocktail) => {
+          drinksToClient.push(cocktail);
+          res.end(JSON.stringify(drinksToClient));
+          // setTimeout(function() {
+          //   res.end(JSON.stringify(drinksToClient));
+          // }, 1000)
         })
         .catch((error) => {
           throw error;
-        })
+        })    
+        
     }
 
     //This second part uses a helper getBeer to obtain data from LSCO.
